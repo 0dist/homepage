@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="js/theme.js"></script>
+  <title>homepage</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link id="stylesheet" rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body class="fade-in-ready">
+  <div class="wrapper content-wrapper">
+
+    <header>
+      <button id="edit" class="button"><svg class="svg-button" viewBox="0 0 24 24"><path d="M24 13v-2l-3.18-.79a7.18 7.18 0 0 0-.29-1.06l2.36-2.28-1-1.74-3.16.87a9.32 9.32 0 0 0-.73-.73l.91-3.16-1.74-1-2.32 2.36a7.18 7.18 0 0 0-1.06-.29L13 0h-2l-.79 3.18a7.18 7.18 0 0 0-1.06.29L6.87 1.11l-1.74 1L6 5.27a9.32 9.32 0 0 0-.73.73l-3.16-.87-1 1.74 2.36 2.28a7.18 7.18 0 0 0-.29 1.06L0 11v2l3.18.79a7.18 7.18 0 0 0 .29 1.06l-2.36 2.28 1 1.74L5.27 18a9.32 9.32 0 0 0 .77.77l-.91 3.16 1.74 1 2.28-2.36a7.18 7.18 0 0 0 1.06.29L11 24h2l.79-3.18a7.18 7.18 0 0 0 1.06-.29l2.28 2.36 1.74-1-.87-3.16a9.32 9.32 0 0 0 .77-.77l3.16.91 1-1.74-2.36-2.28a7.18 7.18 0 0 0 .29-1.06Zm-5-1a7 7 0 1 1-7-7 7 7 0 0 1 7 7Z"/></svg></button>
+
+      <div id="option-wrapper" class="content-wrapper">
+
+        <div id="import-wrapper">
+          <button id="import" class="dropdown-arrow button layout-button">Add</button>
+
+          <div class="import-dropdown hidden-layout blur">
+            <div id="import-option-wrapper">
+              <button title="Import from bookmarks" id="from-bookmarks" class="button"><svg class="svg-button" viewBox="0 0 24 24"><path d="M16 18v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z"/><path d="M12 0H4v16l4-4 4 4V0z"/></svg></button>
+
+              <button title="Import manually" id="from-link" class="button"><svg class="svg-button" viewBox="0 0 24 24"><path d="M20 12h-2v4h-4v2h4v4h2v-4h4v-2h-4v-4zM16 10h4a4 4 0 0 0 0-8h-4a4 4 0 0 0-3.86 3h-.28A4 4 0 0 0 8 2H4a4 4 0 0 0 0 8h4a4 4 0 0 0 3.86-3h.28A4 4 0 0 0 16 10Zm0-6h4a2 2 0 0 1 0 4h-4a2 2 0 0 1-1.72-1H18V5h-3.72A2 2 0 0 1 16 4ZM8 8H4a2 2 0 0 1 0-4h4a2 2 0 0 1 1.72 1H6v2h3.72A2 2 0 0 1 8 8Z"/></svg></button>
+
+              <div id="image" class="button"><input id="input-image" class="button file-input" type="file" accept="image/jpeg, image/webp, image/png"><svg class="svg-button" viewBox="0 0 24 24"><path d="M16 16V0H0v16h16ZM2 14V2h12v5a7 7 0 0 0-7 7Z"/><circle cx="6" cy="6" r="2"/><path d="M24 18h-4v-4h-2v4h-4v2h4v4h2v-4h4v-2z"/></svg></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="preference-wrapper">
+          <button id="preference" class="dropdown-arrow button layout-button ">Preferences</button>
+          <div class="preference-dropdown hidden-layout blur">
+
+            <div id="color-preference-wrapper" class="content-wrapper">
+              <input id="background" title="Background" class="color-box button" type="color" value="#ffffff">
+              <input id="foreground" title="Foreground" class="color-box button" type="color">
+              <input id="sub" title="Sub Color" class="color-box button" type="color" value="#c0c0c0">
+            </div>
+
+            <div id="font-option-wrapper">
+              <input class="range" type="range" id="font-size" min="9" max="12" value="12" step="1">
+              <select id="font-selection" class="button layout-button">
+                <option value="">Default</option>
+                <option value="Figtree">Figtree</option>
+                <option value="Quicksand">Quicksand</option>
+                <option value="Comfortaa">Comfortaa</option>
+                <option value="Sora">Sora</option>
+                <option value="Consolas">Consolas</option>
+              </select>
+            </div>
+
+            <div id="config-option">
+              <div class="config-button-wrapper storage-button content-wrapper"><a id="export-storage" class="button" download="homepage_export.json"></a>Export</div>
+
+              <div class="config-button-wrapper storage-button content-wrapper"><input id="import-storage" class="button file-input" type="file" accept="application/json">Import</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="storage-option" class="content-wrapper">
+          <button id="reset" class="storage-button button blur">Delete All</button>
+          <button id="save" class="storage-button layout-button button">Save</button>
+        </div>
+
+      </div>
+    </header>
+
+    <div id="blur" class="hidden-layout blur"></div>
+
+    <div id="bookmark-layout-wrapper" class="hidden-layout">
+      <input id="bookmark-search" class="input" type="text" placeholder="Search Bookmarks">
+      <button id="submit-bookmark-search" class="button layout-button">Search</button>
+      <div id="bookmark-output-container"></div>
+      <div id="selected-bookmarks"><ul></ul></div>
+      <button id="submit-selected" class="button layout-button">Add</button>
+    </div> 
+
+    <div id="link-layout-wrapper" class="hidden-layout">
+      <input id="title-link" class="input input-link" type="text" placeholder="Title">
+      <input id="url-link" class="input input-link" type="text" placeholder="Url*">
+      <button id="submit-link-value" class="button layout-button">Add</button>
+    </div>
+
+    <div id="canvas">
+      <div id="canvas-sidebar" class="sidebar-elem blur"></div>
+      <div id="sidebar-toggle" class="sidebar-elem"><svg viewBox="0 0 24 24"><path d="M17.29 10.59 6.71 0 5.29 1.41 15.88 12 5.29 22.59 6.71 24l12-12-1.42-1.41z"/></svg></div>
+    </div>
+
+    <div id="context" class="hidden-layout">
+      <button title="Delete" id="context-delete" class="button layout-button context-elem context-button"><svg class="layout-svg" viewBox="0 0 24 24"><path d="M14 2V0h-4v2H2v2h3v20h14V4h3V2ZM7 22V4h10v18"/></svg></button>
+      <button title="Clone" id="context-clone" class="button layout-button context-elem context-button"><svg class="layout-svg" viewBox="0 0 24 24"><path d="M20 4V0H0v20h4v4h20V4ZM4 18H2V2h16v2H4Zm18 4H6V6h16Z"/></svg></button>
+      <input id="edit-block-title" class="input context-elem context-input" type="text" placeholder="Title">
+      <input id="edit-block-url" class="input context-elem context-input" type="text" placeholder="Url">
+      <button title="Update" id="context-update" class="button layout-button context-elem context-button"><svg class="layout-svg" viewBox="0 0 24 24"><path d="M23.78 8.22v-8l-3.31 3.31a12 12 0 1 0 0 17l-1.42-1.42A10 10 0 1 1 12 2a9.9 9.9 0 0 1 7.05 3l-3.27 3.22Z"/></svg></button>
+
+      <button id="image-smaller" class="button layout-button context-elem context-button hidden-context-elem"><svg class="layout-svg" viewBox="0 0 24 24"><path d="M24 11v2H0v-2z"/></svg></button>
+      <button id="image-bigger" class="button layout-button context-elem context-button hidden-context-elem"><svg class="layout-svg" viewBox="0 0 24 24"><path d="M24 11H13V0h-2v11H0v2h11v11h2V13h11v-2z"/></svg></button>
+    </div>
+
+  </div>
+
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>

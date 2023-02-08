@@ -1,0 +1,21 @@
+{
+  "name": "homepage",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "description": "Import bookmarks, links and images to organize and customize the new homepage",
+
+  "permissions": [
+    "bookmarks",
+    "storage",
+    "favicon"
+  ],
+  
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+
+  "icons": {
+    "32": "icons/icon32.png",
+    "128": "icons/icon128.png"
+  }
+}
