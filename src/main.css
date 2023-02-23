@@ -48,11 +48,11 @@ svg {
 	fill: var(--global-foreground-color);
 }
 
-p, input, #block-title, .folder, .config-button-wrapper {
+p, input, .block-title, .folder, .config-button-wrapper {
 	color: var(--global-foreground-color);
 }
 
-.url, input::placeholder {
+.block-url, .row-url, input::placeholder {
 	color: var(--global-sub-color);
 }
 
@@ -249,7 +249,7 @@ header {
 #font-size {
 	background: transparent;
 	appearance: none;
-	width: 32%;
+	width: 31%;
 	height: var(--row-height);
 }
 
@@ -274,7 +274,7 @@ header {
 #font-selection {
 	font-size: inherit;
 	float: right;
-	width: 65%;
+	width: 66%;
 	height: 100%;
 	outline: none;
 	padding-left: 5%;

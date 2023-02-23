@@ -142,8 +142,8 @@ canvas.addEventListener("contextmenu", (cursor) => {
 			}
 		}
 		else {
-			blockTitle = block.getElementsByTagName("*").namedItem("block-title");
-			blockUrl = block.getElementsByTagName("*").namedItem("block-url");
+			blockTitle = block.querySelector(".block-title");
+			blockUrl = block.querySelector(".block-url");
 
 			contextTitle.value = blockTitle.innerText;
 			contextUrl.value = blockUrl.innerText;
@@ -207,16 +207,16 @@ contextUpdate.addEventListener("click", () => {
 
 	let contextUrlVal = contextUrl.value;
 	if (contextUrlVal) {
-		let blockTagA = block.getElementsByTagName("*")[1]; //a tag
-		let blockTagImg = block.getElementsByTagName("*")[2]; //img tag
+		let blockLink = block.querySelector(".link");
+		let blockImage = block.querySelector(".favicon");
 
 		blockTitle.innerText !== contextTitle.value ? blockTitle.innerText = contextTitle.value : null;
 		blockUrl.innerText !== contextUrlVal ? blockUrl.innerText = contextUrlVal : null;
 
-		let iconUrl = compareUrls(blockTagA.getAttribute("href"), contextUrlVal, blockTagImg);
+		let iconUrl = compareUrls(blockLink.getAttribute("href"), contextUrlVal, blockImage);
 
-		blockTagA.href = contextUrlVal;
-		blockTagImg.src = iconUrl;
+		blockLink.href = contextUrlVal;
+		blockImage.src = iconUrl;
 
 		setStorageBlock(contextTitle.value, contextUrlVal, iconUrl, block.getAttribute("style"), block.getAttribute("id"));
 	}
@@ -230,7 +230,7 @@ contextUrl.addEventListener("keydown", (key) => {
 })
 
 
-function compareUrls(blockUrl, contextUrlVal, blockTagImg) {
+function compareUrls(blockUrl, contextUrlVal, blockImage) {
 	let shortContextUrl = shortenUrl(contextUrlVal);
 	let shortBlockUrl = shortenUrl(blockUrl) 
 
@@ -239,7 +239,7 @@ function compareUrls(blockUrl, contextUrlVal, blockTagImg) {
 		return "https://icons.duckduckgo.com/ip3/" + urlFit + ".ico";
 	}
 	else {
-		return blockTagImg.getAttribute("src");
+		return blockImage.getAttribute("src");
 	}
 }
 

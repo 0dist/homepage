@@ -7,12 +7,13 @@ const foreground = document.getElementById("foreground");
 const subColor = document.getElementById("sub");
 
 const stylesheet = document.getElementById("stylesheet");
+const fontStylesheet = document.createElement("style");
 const root = stylesheet.sheet.rules[0].style;
 
 const changeFontSize = document.getElementById("font-size");
 const changeFont = document.getElementById("font-selection");
 
-let font, newPreference;
+let font, activeFontStyle;
 
 
 function setPreferenceVal() {
@@ -35,10 +36,6 @@ colorWrap.addEventListener("click", (cursor) => {
     let elem = cursor.target;
     if (elem != colorWrap) {
         elem.addEventListener("input", setProperty)
-
-        elem.onchange = () => {
-            applyPreference();
-        }
     }
 })
 
@@ -51,14 +48,39 @@ function setProperty(input) {
 
 changeFontSize.addEventListener("mouseup", () => {
     root.setProperty("--font-size", changeFontSize.value + "px", "important");
-    applyPreference();
 })
 
 
 changeFont.addEventListener("change", () => {
     font = changeFont.value;
-    applyPreference();
-    window.location.reload();
+
+    if (!activeFontStyle) {
+        fontStylesheet.id = "font-preview";
+        document.head.appendChild(fontStylesheet);
+        activeFontStyle = true;
+    }
+    if (font) {
+        let newFont = new FontFace(font, "url(fonts/"+font+".woff2)");
+
+        newFont.load().then(() => {
+            document.fonts.add(newFont);
+            fontStylesheet.textContent = "body,button,input{font-family:"+font+"!important}";
+        });
+    }
+    else {
+        let cssTheme = document.head.getElementsByTagName("style")[0];
+        if (!cssTheme.id) {
+            if (cssTheme.textContent.indexOf("@") > 0) {
+                cssTheme.textContent = cssTheme.textContent.split(/[@]/)[0]
+            }
+            else {
+              fontStylesheet.textContent = "";
+            }
+        }
+        else {
+            fontStylesheet.textContent = "";
+        }
+    }
 })
 
 
@@ -81,13 +103,19 @@ class themeTemplate {
 
 
 function applyFont() {
-     if (font) {
-        return "@font-face{font-family:"+font+"-Regular"+";src:url(fonts/"+font+"-Regular"+".woff2);}body,button,input{font-family:"+font+"-Regular"+"}";
+    if (font) {
+        return "@font-face{font-family:"+font+";src:url(fonts/"+font+".woff2);}body,button,input{font-family:"+font+"}";
     }
     else {
         return "";
     }
 }
+
+
+document.getElementById("save").addEventListener("click", () => {
+    applyPreference();
+})
+
 
 
 

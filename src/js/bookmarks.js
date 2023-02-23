@@ -26,7 +26,7 @@ function getBookmarks(result, thisElem) {
             if (child.url) {
                 selectedElems.indexOf(child.id) >= 0 ? checked = "checked" : checked = "";
 
-                let row = '<li id='+child.id+' class="row"><input type="checkbox"'+checked+'><div><p>'+child.title+'</p><p class="url">'+child.url+'</p></div></li>'
+                let row = '<li id='+child.id+' class="row"><input type="checkbox"'+checked+'><div><p>'+child.title+'</p><p class="row-url">'+child.url+'</p></div></li>'
                 ul.insertAdjacentHTML("beforeend", row);
             }
             else {
@@ -120,7 +120,7 @@ submitBookmarkSearch.addEventListener("click", () => {
                 for (let i of result) {
                     selectedElems.indexOf(i.id) >= 0 ? checked = "checked" : checked = "";
 
-                    let row = '<li id='+i.id+' class="row"><input type="checkbox"'+checked+'><div><p>'+i.title+'</p><p class="url">'+i.url+'</p></div></li>'
+                    let row = '<li id='+i.id+' class="row"><input type="checkbox"'+checked+'><div><p>'+i.title+'</p><p class="row-url">'+i.url+'</p></div></li>'
                     ul.insertAdjacentHTML("beforeend", row); 
                 }
             })

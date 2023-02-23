@@ -218,9 +218,8 @@ function renderCanvasBlock(title, url, iconUrl, position, id) {
 	blockIcon.className = "favicon";
 	blockWrapper.appendChild(textWrapper).className = "text";
 	textWrapper.appendChild(textTitle).innerText = title;
-	textTitle.id = "block-title";
-	textWrapper.appendChild(textUrl).className = "url";
-	textUrl.id = "block-url";
+	textTitle.className = "block-title";
+	textWrapper.appendChild(textUrl).className = "block-url";
 	textUrl.innerText = url;
 };
 
