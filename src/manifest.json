@@ -1,8 +1,8 @@
 {
   "name": "homepage",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "manifest_version": 3,
-  "description": "Import bookmarks, links and images to organize and customize the new homepage",
+  "description": "Import bookmarks and images to organize and customize the new homepage",
 
   "permissions": [
     "bookmarks",
@@ -15,7 +15,7 @@
   },
 
   "icons": {
-    "32": "icons/icon32.png",
-    "128": "icons/icon128.png"
+    "32": "icons/logo/icon32.png",
+    "128": "icons/logo/icon128.png"
   }
 }

@@ -1,278 +1,258 @@
 
 
-import {parseBlockInfo, setStorageBlock, parseThroughIndexedDb} from "./storage.js";
 
 
-const header = document.getElementsByTagName("header")[0];
 
-const canvas = document.getElementById("canvas");
-const canvasSidebar = document.getElementById("canvas-sidebar");
-const sidebarToggle = document.getElementById("sidebar-toggle");
-
-const context = document.getElementById("context");
-const contextDelete = document.getElementById("context-delete");
-const contextUpdate = document.getElementById("context-update");
-const contextClone = document.getElementById("context-clone");
-
-const contextTitle = document.getElementById("edit-block-title");
-const contextUrl = document.getElementById("edit-block-url");
-
-const contextSmaller = document.getElementById("image-smaller");
-const contextBigger = document.getElementById("image-bigger");
-
-const disableContext = [contextDelete, contextClone, contextUpdate, contextBigger, contextSmaller];
-
-let editable, block, image, moving, sidebarParent, activeContext;
-let offsetX, offsetY, windowWidth, windowHeight, blockWidth, blockHeight;
-
-let blockTitle, blockUrl;
+import {main} from "./index.js";
+import {storage, StorageBlock} from "./storage.js";
 
 
-canvas.addEventListener("mousedown", (cursor) =>{
-	if (document.getElementById("editable")) {
-		editable = true;
-		if (cursor.target.classList[1] == "canvas-elem") {
-			block = cursor.target;
 
-			if (block.parentElement.id == "canvas-sidebar") {
-				sidebarParent = true;
+
+
+let canvas = new class Canvas {
+	constructor() {
+		this.canvas = document.getElementById("canvas");
+
+		this.ctx = document.getElementById("context");
+		this.ctxDelete = document.getElementById("context-delete");
+		this.ctxUpdate = document.getElementById("context-update");
+		this.ctxClone = document.getElementById("context-clone");
+		this.ctxTitle = document.getElementById("edit-block-title");
+		this.ctxUrl = document.getElementById("edit-block-url");
+
+		this.ctxSmaller = document.getElementById("image-smaller");
+		this.ctxBigger = document.getElementById("image-bigger");
+
+
+
+
+		document.addEventListener("mousedown", (e) => {
+			if (main.editable && !e.target.closest("#context")) {
+				this.ctx.style.display ? this.ctx.style.display = "none" : null;
 			}
-			if (block.classList[0] == "image") {
-				image = true;
-			}
-
-			windowWidth = window.innerWidth, windowHeight = window.innerHeight;
-			blockWidth = block.offsetWidth, blockHeight = block.offsetHeight;
-			offsetX = cursor.offsetX, offsetY = cursor.offsetY;
-
-			if (cursor.button != 2) {
-				mouseMove(true);
-			}
-		}
-		resetContextLayout(false);
-	}
-	else {
-		editable = false;
-	}
-})
-
-
-function mouseMove(state) {
-	state ? window.addEventListener("mousemove", transform) : window.removeEventListener("mousemove", transform);
-}
-
-
-function transform(cursor) {
-	if (!moving && sidebarParent) {
-		block.style.zIndex = 99;
-		canvas.append(block);
-
-		sidebarLastBlock();
-		moving = true;
-	}
-	let borderX = cursor.clientX + (blockWidth - offsetX);
-	let borderY = cursor.clientY + (blockHeight - offsetY);
-
-	let x = Math.round(((cursor.clientX - offsetX) / windowWidth) * 100);
-	let y = Math.round(((cursor.clientY - offsetY) / windowHeight) * 100);
-
-	block.style.left = moveX(x, borderX, windowWidth, blockWidth) + "vw";
-	block.style.top = moveY(y, borderY, windowHeight, blockHeight) + "vh";
-}
-
-
-function moveX(x, borderX, windowWidth, blockWidth) {
-	if (!image && windowWidth < borderX) {
-		return Math.round(((windowWidth - blockWidth) / windowWidth) * 100);
-	}
-	if (borderX - blockWidth <= 0) {
-		return 0;
-	}
-	else {
-		return x;
-	}
-}
-
-
-function moveY(y, borderY, windowHeight, blockHeight) {
-	if (!image && windowHeight < borderY) {
-		return Math.round(((windowHeight - blockHeight) / windowHeight) * 100);
-	}
-	if (borderY - blockHeight <= 0) {
-		return 0;
-	}
-	else {
-		return y;
-	}
-}
-
-
-window.addEventListener("mouseup", () =>{
-	if (editable) {
-		mouseMove(false);
-
-		if (sidebarParent) {
-			block.style.removeProperty("z-index");
-			sidebarParent = false;
-		}
-		moving = image = false;
-	}
-})
-
-
-header.addEventListener("mousedown", (cursor) =>{
-	if (editable) {
-		resetContextLayout(false);
-	}
-})
-
-
-canvas.addEventListener("contextmenu", (cursor) => {
-	if (editable && cursor.target == block) {
-		cursor.preventDefault();
-		if (block.classList[0] == "image") {
-			if (activeContext != "image") {
-				
-				[contextClone, contextTitle, contextUrl, contextUpdate].forEach((i) => {
-					i.style.display = "none";
-				})
-				contextSmaller.style.display = "flex";
-				contextBigger.style.display = "flex";
-				activeContext = "image";
-			}
-		}
-		else {
-			blockTitle = block.querySelector(".block-title");
-			blockUrl = block.querySelector(".block-url");
-
-			contextTitle.value = blockTitle.innerText;
-			contextUrl.value = blockUrl.innerText;
-
-			if (activeContext != "block") {
-				resetContextLayout(true);
-				activeContext = "block";
-			}
-		}
-
-		context.style.display = "unset";
-		let x, y;
-		let contextWidth = context.offsetWidth;
-		let contextHeight = context.offsetHeight;
-
-		if (cursor.clientX + contextWidth >= windowWidth) {
-			x = windowWidth - contextWidth;
-		}
-		else {
-			x = cursor.clientX;
-		}
-		if (cursor.clientY + contextHeight >= windowHeight) {
-			y = windowHeight - contextHeight;
-		}
-		else {
-			y = cursor.clientY;
-		}
-
-		context.style.left = x + "px";
-		context.style.top = y + "px";
-	}
-})
-
-
-disableContext.forEach((i) => {
-	i.addEventListener("contextmenu", (e) => {
-		e.preventDefault();
-	})
-})
-
-
-contextDelete.addEventListener("click", () => {
-	block.remove();
-	context.removeAttribute("style");
-
-	sidebarLastBlock();
-	chrome.storage.local.remove(block.id);
-
-	if (block.firstChild.src) {
-		parseThroughIndexedDb(block.id, "delete")
-	}
-})
-
- 
-contextClone.addEventListener("click", () => {
-	parseBlockInfo(blockTitle.innerText, blockUrl.innerText, "", true, true, block.getElementsByTagName("*")[2].getAttribute("src"));
-})
-
-
-contextUpdate.addEventListener("click", () => {
-
-	let contextUrlVal = contextUrl.value;
-	if (contextUrlVal) {
-		let blockLink = block.querySelector(".link");
-		let blockImage = block.querySelector(".favicon");
-
-		blockTitle.innerText !== contextTitle.value ? blockTitle.innerText = contextTitle.value : null;
-		blockUrl.innerText !== contextUrlVal ? blockUrl.innerText = contextUrlVal : null;
-
-		let iconUrl = compareUrls(blockLink.getAttribute("href"), contextUrlVal, blockImage);
-
-		blockLink.href = contextUrlVal;
-		blockImage.src = iconUrl;
-
-		setStorageBlock(contextTitle.value, contextUrlVal, iconUrl, block.getAttribute("style"), block.getAttribute("id"));
-	}
-})
-
-
-contextUrl.addEventListener("keydown", (key) => {
-	if (key.key == "Enter") {
-		contextUpdate.click();
-	}
-})
-
-
-function compareUrls(blockUrl, contextUrlVal, blockImage) {
-	let shortContextUrl = shortenUrl(contextUrlVal);
-	let shortBlockUrl = shortenUrl(blockUrl) 
-
-	if (shortBlockUrl !== shortContextUrl) {
-		let urlFit = shortenUrl(contextUrlVal);
-		return "https://icons.duckduckgo.com/ip3/" + urlFit + ".ico";
-	}
-	else {
-		return blockImage.getAttribute("src");
-	}
-}
-
-
-function shortenUrl(varible) {
-	return varible.replace(/[h-t]+[:]\W+/, "").split(/[/]+/)[0];
-}
-
-
-contextSmaller.addEventListener("click", () => {
-	block.style.width = block.offsetWidth - 15 + "px";
-})
-contextBigger.addEventListener("click", () => {
-	block.style.width = block.offsetWidth + 15 + "px";
-})
-
-
-function resetContextLayout(reset) {
-	if (!reset) {
-		context.style.display = "none";
-	}
-	else {
-		[context, contextClone, contextTitle, contextUrl, contextUpdate, contextSmaller, contextBigger].forEach((i) => {
-			i.removeAttribute("style");
 		})
+
+		this.canvas.addEventListener("mousedown", (e) =>{
+			if (main.editable) {
+				let elem = e.target, eClass = elem.classList[0];
+				if (e.button != 2 && ["block", "image"].includes(eClass)) {
+
+					this.elemInfo = new ElemInfo(elem, e.target.offsetWidth, e.target.offsetHeight, window.innerWidth, window.innerHeight, e.offsetX, e.offsetY, elem.parentElement == main.sidebar, eClass == "image");
+					// create a reference then remove on mouse up
+					this.moveFunc = (e) => {this.moveElem(e)};
+					this.mouseMove(true);
+				}
+			}
+		})
+
+
+		window.addEventListener("mouseup", () =>{
+			if (main.editable) {
+				this.mouseMove(false);
+				if (this.elemInfo) {
+					if (this.elemInfo.elem.style.zIndex) {
+						this.elemInfo.elem.style.removeProperty("z-index");
+					}
+				}
+			}
+		})
+
+
+
+
+
+
+
+		this.canvas.addEventListener("contextmenu", (e) => {
+			let elem = e.target, eClass = elem.classList[0];
+			if (main.editable && ["block", "image"].includes(eClass)) {
+				e.preventDefault();
+				this.elemInfo = new ElemInfo(elem, ...Array(7), eClass == "image")
+
+				if (eClass == "image") {
+					this.showCtxElems(["none", "flex"]);
+				}
+				else {
+					this.showCtxElems(["flex", "none"]);
+					this.ctxTitle.value = elem.querySelector(".block-title").innerText;
+					this.ctxUrl.value = elem.querySelector(".block-url").innerText;
+				}
+
+				this.ctx.style.display = "inline-flex";
+				let x, y, ctxWidth = this.ctx.offsetWidth, ctxHeight = this.ctx.offsetHeight, wWidth = window.innerWidth, wHeight = window.innerHeight;
+
+				if (e.clientX + ctxWidth >= wWidth) {
+					x = wWidth - ctxWidth;
+				}
+				else {
+					x = e.clientX;
+				}
+				if (e.clientY + ctxHeight >= wHeight) {
+					y = wHeight - ctxHeight;
+				}
+				else {
+					y = e.clientY;
+				}
+				this.ctx.style.left = x + "px", this.ctx.style.top = y + "px";
+			}
+		})
+
+
+
+		this.ctxDelete.addEventListener("click", () => {
+			this.elemInfo.elem.remove();
+			this.checkIfLast();
+			this.ctx.style.display = "none";
+
+			!this.elemInfo.image ? this.removeFromStorage("blocks") : [this.removeFromStorage("images"), storage.requestIndexedDb("delete", this.elemInfo.elem.id)];
+		})
+
+
+		this.ctxClone.addEventListener("click", () => {
+			let obj = {}, elem = this.elemInfo.elem;
+
+			obj[storage.generateId()] = new StorageBlock(elem.querySelector(".block-title").innerText, elem.querySelector(".block-url").innerText, elem.querySelector(".favicon").src, "");
+			storage.setBlockInfo([obj]);
+			main.openSidebar();
+		})
+
+
+		this.ctxUpdate.addEventListener("click", () => {
+			let elem = this.elemInfo.elem, ctxTitle = this.ctxTitle.value, ctxUrl = this.ctxUrl.value, elemTitle = elem.querySelector(".block-title"), elemUrl = elem.querySelector(".block-url");
+
+			if (elemTitle.innerText != ctxTitle || elemUrl.innerText != ctxUrl) {
+				elemTitle.innerText = ctxTitle;
+				elemUrl.innerText = ctxUrl;
+				this.updateStorage(elem.id, ctxTitle, ctxUrl);
+			}
+		})
+
+		for (let i of [this.ctxTitle, this.ctxUrl]) {
+			i.addEventListener("keydown", (e) => {
+	            if (e.key == "Enter") {
+	            	this.ctxUpdate.click();
+	            }
+	        })
+		}
+
+
+		this.ctxSmaller.addEventListener("click", () => {
+			this.elemInfo.elem.style.width = this.elemInfo.elem.offsetWidth - 30 + "px";
+		})
+		this.ctxBigger.addEventListener("click", () => {
+			this.elemInfo.elem.style.width = this.elemInfo.elem.offsetWidth + 30 + "px";
+		})
+
+
+
+
+
+
+	}
+
+
+	mouseMove(state) {
+		state ? window.addEventListener("mousemove", this.moveFunc) : window.removeEventListener("mousemove", this.moveFunc);
+	}
+
+	moveElem(e) {
+		let info = this.elemInfo;
+		if (info.sidebar && !info.elem.style.zIndex) {
+			info.elem.style.zIndex = 99;
+			this.canvas.append(info.elem);
+			this.checkIfLast();
+		}
+		let borderX = e.clientX + (info.width - info.offsetX), borderY = e.clientY + (info.height - info.offsetY);
+		let x = Math.round(((e.clientX - info.offsetX) / info.wWidth) * 100), y = Math.round(((e.clientY - info.offsetY) / info.wHeight) * 100);
+
+		// don't include boundaries if image
+		info.elem.style.left = info.image ? x + "vw" : this.moveX(x, borderX, info.wWidth, info.width) + "vw";
+		info.elem.style.top = info.image ? y + "vh" : this.moveY(y, borderY, info.wHeight, info.height) + "vh";
+	}
+
+	moveX(x, borderX, wWidth, eWidth) {
+		if (borderX - eWidth <= 0) {
+			return 0
+		}
+		if (borderX <= wWidth) {
+			return x
+		}
+	}
+
+	moveY(y, borderY, wHeight, eHeight) {
+		if (borderY - eHeight <= 0) {
+			return 0
+		}
+		if (borderY <= wHeight) {
+			return y
+		}
+	}
+
+
+	checkIfLast() {
+		if (!main.sidebar.children.length) {
+			main.resetSidebar();
+		}
+	}
+
+
+	showCtxElems(val) {
+		for (let i of [this.ctxClone, this.ctxTitle, this.ctxUrl, this.ctxUpdate]) {
+			i.style.display = val[0];
+		}
+		for (let i of [this.ctxSmaller, this.ctxBigger]) {
+			i.style.display = val[1];
+		}
+	}
+
+
+	removeFromStorage(key) {
+		let data = JSON.parse(localStorage.getItem(key)), obj = Object;
+		data.splice(data.findIndex((i) => {return obj.keys(i)[0] == this.elemInfo.elem.id;}), 1);
+		localStorage.setItem(key, JSON.stringify(data));
+	}
+
+
+	updateStorage(id, title, url) {
+		let blocks = JSON.parse(localStorage.getItem("blocks")), obj = Object;
+		for (let i of blocks) {
+			if (obj.keys(i)[0] == id) {
+				obj.values(i)[0].title = title;
+				obj.values(i)[0].url = url;
+				localStorage.setItem("blocks", JSON.stringify(blocks));
+				break
+			}
+		}
+
+	}
+
+
+
+
+
+}
+
+
+
+
+
+class ElemInfo {
+	constructor(elem, width, height, wWidth, wHeight, offsetX, offsetY, sidebar, image) {
+		this.elem = elem;
+		this.width = width;
+		this.height = height;
+		this.wWidth = wWidth;
+		this.wHeight = wHeight;
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
+		this.sidebar = sidebar;
+		this.image = image;
 	}
 }
 
 
-function sidebarLastBlock() {
-	if (!canvasSidebar.children.length) {
-		[canvasSidebar, sidebarToggle, header].forEach((i) => {
-	        i.classList.remove("active-sidebar", "sidebar-width", "reflect-toggle");
-	    })
-	};
-}
+
+
+export {canvas}
+

@@ -41,6 +41,13 @@ body, button, input {
 }
 
 
+.icon {
+	background-color: var(--global-foreground-color);
+	width: 20px;
+	height: 20px;
+	background-repeat: no-repeat;
+}
+
 
 
 
@@ -165,16 +172,14 @@ header {
 
 
 
-#from-link {
-	margin: 0 var(--gap) 0 calc(var(--gap) - 7px);
-}
-
 #image {
+	margin-left: calc(var(--gap) - 7px);
 	position: relative;
 }
 
 #input-image {
 	position: absolute;
+	z-index: 1;
 	left: 0; right: 0;
 }
 
@@ -491,10 +496,9 @@ li {
 	width: 30px;
 	height: 30px;
 	margin: auto;
-	padding-left: 5px;
 }
 
-#sidebar-toggle svg {
+#sidebar-toggle div {
 	height: 100%;
 	width: 100%;
 }
@@ -549,7 +553,7 @@ li {
 
 
 .image img {
-	width: 100%;
+	min-width: 100%;
 	pointer-events: none;
 }
 
@@ -584,7 +588,8 @@ li {
 
 .layout-svg {
 	height: 50%;
-	fill: var(--global-background-color);
+	width: 50%;
+	background-color: var(--global-background-color);
 }
 
 .hidden-context-elem {
