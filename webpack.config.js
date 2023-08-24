@@ -1,12 +1,14 @@
 
 
 const path = require("path");
-const bundleName = "index.js", packageName = require("./package.json").name;
-const distPath = `dist/${packageName}`;
+const bundleName = "index.js";
+const dist = "dist/"+require("./package.json").name+"";
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlReplaceWebpackPlugin = require("html-replace-webpack-plugin");
 const FileManagerPlugin = require("filemanager-webpack-plugin");
+// css entry file leaves empty js file
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -15,14 +17,14 @@ const TerserPluign = require("terser-webpack-plugin");
 
 module.exports = {
 	mode: "production",
-	entry: [
-		path.resolve(__dirname, "src/js/index.js"),
-		path.resolve(__dirname, "src/main.css")
-	],
+	entry: {
+		"./js/index": "./src/js/index.js",
+		"./js/theme": "./src/js/theme.js",
+		"./main": "./src/main.css",
+	},
 
 	output : {
-	    path: path.resolve(__dirname, distPath),
-	    filename: bundleName,
+	    path: path.resolve(__dirname, dist),
 	    clean: true
 	},
 
@@ -52,21 +54,18 @@ module.exports = {
 			events: {
 				onEnd: {
 					copy: [
-						{source: "src/fonts", destination: `${distPath}/fonts`},
-						{source: "src/icons", destination: `${distPath}/icons`},
-						{source: "src/js/theme.js", destination: `${distPath}/js/theme.js`},
-						{source: "src/manifest.json", destination: `${distPath}/manifest.json`}
-					],
-					move: [
-						{source: `${distPath}/${bundleName}`, destination: `${distPath}/js/${bundleName}`}
+						{source: "src/fonts", destination: `${dist}/fonts`},
+						{source: "src/icons", destination: `${dist}/icons`},
+						{source: "src/manifest.json", destination: `${dist}/manifest.json`}
 					],
 					archive: [
-						{source: distPath, destination: `${distPath}_${require("./package.json").version}.zip`}
+						{source: dist, destination: `${dist}_${require("./package.json").version}.zip`}
 					],
-					delete: [distPath]
+					delete: [dist]
 				}
 			}
 		}),
+		new RemoveEmptyScriptsPlugin(),
 		new MiniCssExtractPlugin()
 	]
 }

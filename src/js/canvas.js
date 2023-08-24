@@ -111,8 +111,8 @@ let canvas = new class Canvas {
 
 		this.ctxClone.addEventListener("click", () => {
 			let obj = {}, elem = this.elemInfo.elem;
-
-			obj[storage.generateId()] = new StorageBlock(elem.querySelector(".block-title").innerText, elem.querySelector(".block-url").innerText, elem.querySelector(".favicon").src, "");
+			
+			obj[storage.generateId()] = new StorageBlock(elem.querySelector(".block-title").innerText, elem.querySelector(".block-url").innerText, elem.querySelector(".favicon").getAttribute("src"), "");
 			storage.setBlockInfo([obj]);
 			main.openSidebar();
 		})
