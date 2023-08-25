@@ -131,9 +131,6 @@ let main = new class Main {
 
 
 
-
-
-
     }
 
     enableCanvasEdit() {

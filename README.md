@@ -1,5 +1,5 @@
 ## How to install
-Download the [latest](https://github.com/0dist/homepage/releases) archive file or run the following commands:
+Download the [latest](https://github.com/0dist/homepage/releases) `homepage` archive file or run the following commands:
 
 ```
 git clone https://github.com/0dist/homepage

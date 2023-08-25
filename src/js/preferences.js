@@ -13,6 +13,9 @@ let preferences = new class Preferences {
         this.foreground = document.getElementById("foreground");
         this.subColor = document.getElementById("sub");
 
+        this.titleField = document.getElementById("title");
+        this.submitTitle = document.getElementById("submit-title");
+
         this.stylesheet = document.getElementById("stylesheet");
         this.root = this.stylesheet.sheet.rules[0].style;
         this.body = this.stylesheet.sheet.rules[3].style;
@@ -56,6 +59,19 @@ let preferences = new class Preferences {
         })
 
 
+        this.submitTitle.addEventListener("click", () => {
+            let docTitle = document.getElementsByTagName("title")[0]
+            docTitle.innerText != this.titleField.value ? [docTitle.innerText = this.titleField.value, this.setPreferences("save")] : null;
+
+        })
+
+        this.titleField.addEventListener("keydown", (key) => {
+            if (key.key == "Enter") {
+                this.submitTitle.click();
+            }
+        })
+
+
     }
 
 
@@ -63,7 +79,7 @@ let preferences = new class Preferences {
     setPreferences(type) {
         let pref = JSON.parse(localStorage.getItem("preferences"));
         if (pref) {
-            let elems = [[this.background, "background"], [this.foreground, "foreground"], [this.subColor, "sub"], [this.fontSize, "fontSize"], [this.fontFamily, "fontFamily"]], total = elems.length, obj = Object;
+            let elems = [[this.background, "background"], [this.foreground, "foreground"], [this.subColor, "sub"], [this.fontSize, "fontSize"], [this.fontFamily, "fontFamily"], [this.titleField, "title"]], total = elems.length, obj = Object;
 
             if (type == "set") {
                 for (let elem of elems) {
@@ -83,7 +99,7 @@ let preferences = new class Preferences {
         }
         // initiate
         else {
-            pref = new Theme(this.background.value, this.foreground.value, this.subColor.value, this.fontSize.value, this.fontFamily.value);
+            pref = new Theme(this.background.value, this.foreground.value, this.subColor.value, this.fontSize.value, this.fontFamily.value, this.titleField.value);
             localStorage.setItem("preferences", JSON.stringify(pref));
         }
 
@@ -99,12 +115,13 @@ let preferences = new class Preferences {
 
 
 class Theme {
-    constructor(background, foreground, sub, fontSize, fontFamily) {
+    constructor(background, foreground, sub, fontSize, fontFamily, title) {
         this.background = background;
         this.foreground = foreground;
         this.sub = sub;
         this.fontSize = fontSize;
         this.fontFamily = fontFamily;
+        this.title = title;
     }
 }
 

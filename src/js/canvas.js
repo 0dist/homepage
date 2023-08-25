@@ -111,7 +111,7 @@ let canvas = new class Canvas {
 
 		this.ctxClone.addEventListener("click", () => {
 			let obj = {}, elem = this.elemInfo.elem;
-			
+
 			obj[storage.generateId()] = new StorageBlock(elem.querySelector(".block-title").innerText, elem.querySelector(".block-url").innerText, elem.querySelector(".favicon").getAttribute("src"), "");
 			storage.setBlockInfo([obj]);
 			main.openSidebar();
@@ -119,11 +119,11 @@ let canvas = new class Canvas {
 
 
 		this.ctxUpdate.addEventListener("click", () => {
-			let elem = this.elemInfo.elem, ctxTitle = this.ctxTitle.value, ctxUrl = this.ctxUrl.value, elemTitle = elem.querySelector(".block-title"), elemUrl = elem.querySelector(".block-url");
+			let elem = this.elemInfo.elem, ctxTitle = this.ctxTitle.value, ctxUrl = this.ctxUrl.value, elemTitle = elem.querySelector(".block-title"), elemUrl = elem.querySelector(".block-url"), elemLink = elem.querySelector(".link");
 
 			if (elemTitle.innerText != ctxTitle || elemUrl.innerText != ctxUrl) {
 				elemTitle.innerText = ctxTitle;
-				elemUrl.innerText = ctxUrl;
+				elemUrl.innerText = elemLink.href = ctxUrl;
 				this.updateStorage(elem.id, ctxTitle, ctxUrl);
 			}
 		})

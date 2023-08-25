@@ -216,21 +216,13 @@ header {
 
 
 #color-preference-wrapper {
-	width: 100%;
 	height: var(--row-height);
-}
-
-#color-preference-wrapper input:nth-child(2) {
-	margin: 0 var(--sub-gap);
+	display: flex;
+	gap: var(--sub-gap);
 }
 
 .color-box::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-.color-box {
-	width: calc((100% - var(--sub-gap) * 2) / 3);
-	float: left;
+	padding: 0;
 }
 
 
@@ -241,6 +233,8 @@ header {
 	margin-top: var(--sub-gap);
 	height: var(--row-height);
 	position: relative;
+	display: flex;
+	gap: var(--sub-gap);
 }
 
 #font-option-wrapper::after {
@@ -254,7 +248,7 @@ header {
 #font-size {
 	background: transparent;
 	appearance: none;
-	width: 31%;
+	width: 50%;
 	height: var(--row-height);
 }
 
@@ -272,15 +266,9 @@ header {
   background: var(--global-foreground-color);
 }
 
-
-
-
-
 #font-selection {
 	font-size: inherit;
-	float: right;
-	width: 66%;
-	height: 100%;
+	width: 100%;
 	outline: none;
 	padding-left: 5%;
 	appearance: none;
@@ -290,13 +278,33 @@ header {
 
 
 
-#config-option {
+#change-title-wrapper {
+	display: flex;
+	height: var(--row-height);
+	margin-top: var(--sub-gap);
+}
+
+#title {
+	border: 1px solid var(--global-foreground-color);
+}
+
+#submit-title {
+	border: 1px solid var(--global-foreground-color);
+	margin-left: var(--sub-gap);
+	width: 48%;
+}
+
+
+
+
+
+#storage-transfer {
 	height: var(--row-height);
 	width: 100%;
 	margin-top: var(--gap);
 }
 
-#config-option div:nth-child(2) {
+#storage-transfer div:nth-child(2) {
 	margin-left: var(--sub-gap);
 }
 
@@ -313,6 +321,7 @@ header {
 	position: absolute;
 	left: 0; right: 0;
 }
+
 
 
 
