@@ -210,7 +210,7 @@ let canvas = new class Canvas {
 	removeFromStorage(key) {
 		let data = JSON.parse(localStorage.getItem(key)), obj = Object;
 		data.splice(data.findIndex((i) => {return obj.keys(i)[0] == this.elemInfo.elem.id;}), 1);
-		localStorage.setItem(key, JSON.stringify(data));
+		data.length ? localStorage.setItem(key, JSON.stringify(data)) : localStorage.removeItem(key);
 	}
 
 

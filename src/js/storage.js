@@ -15,8 +15,8 @@ let storage = new class Storage {
 	pullLocalStorage() {
 		let blocks = JSON.parse(localStorage.getItem("blocks"));
 		let images = JSON.parse(localStorage.getItem("images"));
-
 		let obj = Object;
+		
 		if (blocks) {
 			for (let i of blocks) {
 				let val = obj.values(i)[0];
